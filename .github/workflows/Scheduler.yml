@@ -1,0 +1,40 @@
+name: "Scheduler"
+on:
+  schedule:
+    # - cron: '*/15 * * * *'  # 15分鐘測試用,雖然github寫最短可以設5分鐘,但是我設10分鐘實際大約會要到15分鐘才會動
+    - cron: '25 4 * * *'  # 固定時間執行, UTC時間
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Install iconv
+        run: sudo apt install -y libc6-dev
+
+      - name: Fetch Website Content
+        run: |
+          echo "call fetch.sh"
+          chmod +x ./fetch.sh
+          ./fetch.sh
+
+      - name: Create Commit
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Update $(date +'%Y%m%d')"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: main
