@@ -23,9 +23,9 @@ jobs:
 
       - name: Fetch Website Content
         run: |
-          echo "call fetch.sh"
-          chmod +x ./fetch.sh
-          ./fetch.sh
+          echo "call fetchSubdir.sh"
+          chmod +x ./fetchSubdir.sh
+          ./fetchSubdir.sh
 
       - name: Create Commit
         run: |
